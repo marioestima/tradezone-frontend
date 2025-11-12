@@ -108,9 +108,10 @@ const Login = () => {
         </form>
 
         {/* Rodapé */}
-        <div className="pb-6 text-center text-gray-500 text-sm mt-6">
+        <div className="fixed bottom-0 w-full pb-6 text-center text-gray-500 text-sm">
           © 2025 TRADEZONE — Todos os direitos reservados.
         </div>
+
       </div>
     </div>
   );

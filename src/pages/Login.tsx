@@ -1,25 +1,26 @@
 // src/pages/Login.tsx
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
 
     try {
       await login(email, password);
+      toast.success("Login efetuado com sucesso!");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao fazer login");
+      toast.error(err.response?.data?.message || "Erro ao fazer login");
     } finally {
       setLoading(false);
     }
@@ -30,9 +31,9 @@ const Login = () => {
       {/* Fundo com gradiente */}
       <div className="absolute inset-x-0 top-0 h-[60%] bg-[radial-gradient(ellipse_50%_50%_at_50%_-10%,rgba(37,244,54,0.2),rgba(255,255,255,0))]" />
 
-      {/* Conteúdo principal */}
-      <div className="relative  z-10 flex flex-col w-full max-w-md space-y-6">
-        {/* Logo */}
+      <Toaster position="top-center" reverseOrder={false} />
+
+      <div className="relative z-10 flex flex-col w-full max-w-md space-y-6">
         {/* Logo fixo no topo */}
         <div className="fixed top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
           <svg
@@ -51,12 +52,8 @@ const Login = () => {
           </h1>
         </div>
 
-        {/* Formulário de login */}
-        <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-          {error && (
-            <div className="text-red-500 text-sm text-center">{error}</div>
-          )}
-
+        {/* Formulário */}
+        <form className="flex flex-col space-y-4 mt-24" onSubmit={handleSubmit}>
           {/* Campo de e-mail */}
           <div className="w-full relative">
             <Mail
@@ -80,20 +77,27 @@ const Login = () => {
               className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Sua senha"
-              className="w-full h-12 pl-11 pr-4 bg-gray-800/50 rounded-xl border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#25F436] transition text-sm"
+              className="w-full h-12 pl-11 pr-10 bg-gray-800/50 rounded-xl border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#25F436] transition text-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
 
           {/* Botão de login */}
           <button
             type="submit"
             disabled={loading}
-            className="flex h-12 w-full items-center justify-center rounded-xl bg-[#36853D] text-white text-base font-bold tracking-wide hover:opacity-90 transition-transform hover:scale-[1.02]"
+            className="flex h-12 w-full mt-6 items-center justify-center rounded-xl bg-[#36853D] text-white text-base font-bold tracking-wide hover:opacity-90 transition-transform hover:scale-[1.02]"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
@@ -101,17 +105,16 @@ const Login = () => {
           {/* Link para registro */}
           <Link
             to="/register"
-            className="flex h-12 w-full mt-3 items-center justify-center rounded-xl bg-gray-800/50 text-white text-base font-semibold tracking-wide backdrop-blur-sm border border-gray-700 hover:bg-gray-700/40 transition"
+            className="flex h-12 w-full mt-4 items-center justify-center rounded-xl bg-gray-800/50 text-white text-base font-semibold tracking-wide backdrop-blur-sm border border-gray-700 hover:bg-gray-700/40 transition"
           >
             Registrar
           </Link>
         </form>
 
-        {/* Rodapé */}
+        {/* Rodapé fixo */}
         <div className="fixed bottom-0 w-full pb-6 text-center text-gray-500 text-sm">
           © 2025 TRADEZONE — Todos os direitos reservados.
         </div>
-
       </div>
     </div>
   );

@@ -20,11 +20,13 @@ export const userService = {
   register: async (
     name: string,
     email: string,
+    phone: number,
     password: string
   ): Promise<User> => {
     const response = await axios.post(`${API_URL}/auth/register`, {
       name,
       email,
+      phone,
       password,
     });
     return response.data;

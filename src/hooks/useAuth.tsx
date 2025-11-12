@@ -15,6 +15,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (name: string, email: string, phone: number, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,10 +29,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const data = await userService.login(email, password); // backend retorna { user, token }
+    const data = await userService.login(email, password);  
     setUser(data.user);
     localStorage.setItem("user", JSON.stringify(data.user));
     localStorage.setItem("token", data.token);
+  };
+
+  const register = async (name: string, email: string, phone: number, password: string) => {
+    const newUser = await userService.register(name, email, phone, password);  
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
   };
 
   const logout = () => {
@@ -41,14 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

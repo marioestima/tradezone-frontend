@@ -111,6 +111,13 @@ const Login = () => {
           </Link>
         </form>
 
+        {/* Rodapé fixo */}
+        <div className="fixed bottom-0 left-0 w-full pb-6">
+          <div className="mx-auto w-fit text-center text-gray-500 text-sm">
+            © 2025 TRADEZONE — Todos os direitos reservados.
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -52,17 +52,8 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Texto informativo */}
-        <div className="flex flex-col items-center text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-[#25F436]">
-            Bem-vindo de volta! Faça login para continuar.
-          </h2>
-          <p className="mt-3 max-w-sm text-base font-normal text-gray-400">
-            Acompanhe seus ganhos diários, gerencie seus planos e invista com
-            segurança avançada.
-          </p>
-        </div>
-
+    
+        
         {/* Formulário de login */}
         <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
           {error && (
@@ -105,7 +96,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="flex h-12 w-full items-center justify-center rounded-xl bg-[#36853D] text-black text-base font-bold tracking-wide hover:opacity-90 transition-transform hover:scale-[1.02]"
+            className="flex h-12 w-full items-center justify-center rounded-xl bg-[#36853D] text-white text-base font-bold tracking-wide hover:opacity-90 transition-transform hover:scale-[1.02]"
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>

@@ -1,9 +1,9 @@
-
+import AppRoutes from "./routes/AppRoutes"
 
 function App() {
   return (
     <>
-      <h2 className="bg-blue-50">ola</h2>
+      <AppRoutes />
     </>
   )
 }

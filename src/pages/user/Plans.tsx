@@ -16,6 +16,7 @@ import {
   Wallet,
   ActivityIcon,
 } from "lucide-react";
+import { setKeyboardInteraction } from "recharts/types/state/tooltipSlice";
 
 interface Plan {
   id: string;
@@ -29,6 +30,8 @@ export default function Plans() {
   const [filter, setFilter] = useState<"Abertos" | "Fechados">("Abertos");
   const [search, setSearch] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [notifications, setNotifications] = useState<number>(3);
+
 
   // Simula chamada à API
   useEffect(() => {
@@ -38,6 +41,7 @@ export default function Plans() {
       { id: "TZ54321", status: "Fechado", investment: 2500, dailyProfit: -5.1 },
     ];
     setPlans(fakePlans);
+    setNotifications(3)
   }, []);
 
   const filteredPlans = plans

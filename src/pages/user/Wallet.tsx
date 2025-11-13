@@ -17,9 +17,10 @@ import {
 import { Dialog, Transition } from "@headlessui/react";
 
 const WalletPage: React.FC = () => {
-  const [balanceVisible, setBalanceVisible] = useState(false); // valor inicialmente oculto
+  const [balanceVisible, setBalanceVisible] = useState(false);
   const [filter, setFilter] = useState("all");
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false); // modal saque
 
   const transactions = [
     {
@@ -117,7 +118,10 @@ const WalletPage: React.FC = () => {
             Depositar
           </button>
 
-          <button className="flex-1 h-14 flex items-center justify-center gap-2 bg-surface-dark text-gray-50 font-bold rounded-xl">
+          <button
+            onClick={() => setWithdrawModalOpen(true)}
+            className="flex-1 h-14 flex items-center justify-center gap-2 bg-red-500 text-black font-bold rounded-xl"
+          >
             <ArrowUpRight size={20} />
             Sacar
           </button>
@@ -134,18 +138,19 @@ const WalletPage: React.FC = () => {
             <button
               key={i}
               onClick={() => setFilter(f)}
-              className={`pb-1 ${filter === f
-                ? "text-green-400 border-green-400 border-b-2"
-                : "text-gray-400"
-                }`}
+              className={`pb-1 ${
+                filter === f
+                  ? "text-green-400 border-green-400 border-b-2"
+                  : "text-gray-400"
+              }`}
             >
               {f === "all"
                 ? "Tudo"
                 : f === "deposit"
-                  ? "Depósitos"
-                  : f === "withdraw"
-                    ? "Saques"
-                    : "Lucros"}
+                ? "Depósitos"
+                : f === "withdraw"
+                ? "Saques"
+                : "Lucros"}
             </button>
           ))}
         </div>
@@ -175,7 +180,51 @@ const WalletPage: React.FC = () => {
         </div>
       </main>
 
-      {/* MODAL */}
+      {/* MODAL DE SAQUE */}
+      <Transition appear show={withdrawModalOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setWithdrawModalOpen(false)}
+        >
+          <div className="fixed inset-0 bg-black/60" aria-hidden="true" />
+          <div className="fixed inset-0 flex items-end justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="transform transition duration-200"
+              enterFrom="translate-y-full"
+              enterTo="translate-y-0"
+              leave="transform duration-200"
+              leaveFrom="translate-y-0"
+              leaveTo="translate-y-full"
+            >
+              <Dialog.Panel className="w-full max-w-md rounded-t-2xl bg-[#111] p-6 space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-bold text-white">Solicitar Saque</h3>
+                  <button onClick={() => setWithdrawModalOpen(false)}>
+                    <X size={24} className="text-gray-400" />
+                  </button>
+                </div>
+
+                <p className="text-gray-300 mb-2">
+                  Insira o valor do saque (mínimo 2.000 Kz):
+                </p>
+                <input
+                  type="number"
+                  min={2000}
+                  className="w-full bg-black border border-gray-700 rounded-lg p-2 text-white mb-4"
+                  placeholder="Valor do Saque"
+                />
+                <button className="w-full bg-red-500 text-black font-bold py-3 rounded-xl">
+                  Solicitar Saque
+                </button>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* MODAL DE TRANSAÇÃO */}
       <Transition appear show={!!selectedTransaction} as={Fragment}>
         <Dialog
           as="div"
@@ -234,21 +283,6 @@ const WalletPage: React.FC = () => {
                     <button className="w-full bg-green-500 text-black font-bold py-3 rounded-xl mt-2">
                       Próxima Etapa (Pagar) ➡️
                     </button>
-                  </>
-                )}
-
-                {selectedTransaction?.type === "withdraw" && (
-                  <>
-                    <div className="flex flex-col items-center gap-3">
-                      <img
-                        src="https://i.pravatar.cc/150?img=5"
-                        className="w-20 h-20 rounded-full"
-                      />
-                      <p className="text-gray-300">Deseja solicitar o saque?</p>
-                      <button className="w-full bg-red-500 text-black font-bold py-3 rounded-xl">
-                        Solicitar Saque
-                      </button>
-                    </div>
                   </>
                 )}
 

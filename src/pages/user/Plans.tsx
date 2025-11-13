@@ -37,8 +37,8 @@ export default function Plans() {
   useEffect(() => {
     const fakePlans: Plan[] = [
       { id: "TZ12345", status: "Ativo", investment: 10000, dailyProfit: 75.5 },
-      { id: "TZ67890", status: "Pendente", investment: 5000, dailyProfit: 35.2 },
-      { id: "TZ54321", status: "Fechado", investment: 2500, dailyProfit: -5.1 },
+      { id: "TZ67890", status: "Ativo", investment: 5000, dailyProfit: 35.2 },
+      { id: "TZ54321", status: "Ativo", investment: 2500, dailyProfit: -5.1 },
     ];
     setPlans(fakePlans);
     setNotifications(3)

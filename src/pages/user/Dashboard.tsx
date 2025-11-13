@@ -1,6 +1,7 @@
 import { Home, BarChart2, Wallet, User, ArrowUp, Bell, X, TrendingUp, Calendar, Coins } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   LineChart,
   Line,
@@ -29,6 +30,7 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState<number>(3);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const username = "tradezoner";
+  const location = useLocation(); // <--- para rota ativa
 
   // Mock API
   useEffect(() => {
@@ -230,22 +232,41 @@ const Dashboard = () => {
       {/* RODAPÉ */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-zinc-800 bg-[#0A0A0A]/70 px-4 pt-3 pb-6 backdrop-blur-md">
         <div className="mx-auto grid max-w-md grid-cols-4 items-center justify-items-center gap-2">
-          <a className="flex flex-col items-center text-green-500" href="/dashboard">
+          <Link
+            to="/dashboard"
+            className={`flex flex-col items-center ${location.pathname === "/dashboard" ? "text-green-500" : "text-zinc-400 hover:text-green-500"
+              }`}
+          >
             <Home size={20} />
             <span className="text-[11px] font-bold">Início</span>
-          </a>
-          <a className="flex flex-col items-center text-zinc-400 hover:text-green-500" href="/plans">
+          </Link>
+
+          <Link
+            to="/plans"
+            className={`flex flex-col items-center ${location.pathname === "/plans" ? "text-green-500" : "text-zinc-400 hover:text-green-500"
+              }`}
+          >
             <BarChart2 size={20} />
             <span className="text-[11px] font-bold">Planos</span>
-          </a>
-          <a className="flex flex-col items-center text-zinc-400 hover:text-green-500" href="/wallet">
+          </Link>
+
+          <Link
+            to="/wallet"
+            className={`flex flex-col items-center ${location.pathname === "/wallet" ? "text-green-500" : "text-zinc-400 hover:text-green-500"
+              }`}
+          >
             <Wallet size={20} />
             <span className="text-[11px] font-bold">Carteira</span>
-          </a>
-          <a className="flex flex-col items-center text-zinc-400 hover:text-green-500" href="/profile">
+          </Link>
+
+          <Link
+            to="/profile"
+            className={`flex flex-col items-center ${location.pathname === "/profile" ? "text-green-500" : "text-zinc-400 hover:text-green-500"
+              }`}
+          >
             <User size={20} />
             <span className="text-[11px] font-bold">Perfil</span>
-          </a>
+          </Link>
         </div>
       </footer>
     </div>

@@ -47,6 +47,7 @@ const Dashboard = () => {
         { dia: "S", lucro: 70 },
         { dia: "H", lucro: 130 },
       ]);
+      setNotificacoes(3);
     }, 800);
   }, []);
 

@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import type { ReactNode } from "react";
 import { userService } from "../services/userService";
 

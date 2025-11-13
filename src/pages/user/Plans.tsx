@@ -1,4 +1,4 @@
- import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   Bell,
@@ -20,7 +20,7 @@ interface Plan {
   dailyProfit: number;
 }
 
-const MyPlans = () => {
+const Plans = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [filter, setFilter] = useState<"Abertos" | "Fechados">("Abertos");
   const [search, setSearch] = useState("");
@@ -65,21 +65,19 @@ const MyPlans = () => {
           <div className="flex h-12 items-center justify-center rounded-lg bg-zinc-900 p-1">
             <button
               onClick={() => setFilter("Abertos")}
-              className={`flex-1 h-full rounded-md text-sm font-medium transition-colors ${
-                filter === "Abertos"
-                  ? "bg-background-dark text-white shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-300"
-              }`}
+              className={`flex-1 h-full rounded-md text-sm font-medium transition-colors ${filter === "Abertos"
+                ? "bg-background-dark text-white shadow-sm"
+                : "text-zinc-500 hover:text-zinc-300"
+                }`}
             >
               Planos Abertos
             </button>
             <button
               onClick={() => setFilter("Fechados")}
-              className={`flex-1 h-full rounded-md text-sm font-medium transition-colors ${
-                filter === "Fechados"
-                  ? "bg-background-dark text-white shadow-sm"
-                  : "text-zinc-500 hover:text-zinc-300"
-              }`}
+              className={`flex-1 h-full rounded-md text-sm font-medium transition-colors ${filter === "Fechados"
+                ? "bg-background-dark text-white shadow-sm"
+                : "text-zinc-500 hover:text-zinc-300"
+                }`}
             >
               Planos Fechados
             </button>
@@ -105,33 +103,30 @@ const MyPlans = () => {
               onClick={() =>
                 plan.status !== "Fechado" ? setSelectedPlan(plan) : null
               }
-              className={`flex flex-col rounded-xl p-4 border border-neutral-800 transition-all ${
-                plan.status === "Fechado"
-                  ? "bg-zinc-900 opacity-60 hover:opacity-80"
-                  : "bg-zinc-900 hover:bg-zinc-800 active:scale-[0.98]"
-              }`}
+              className={`flex flex-col rounded-xl p-4 border border-neutral-800 transition-all ${plan.status === "Fechado"
+                ? "bg-zinc-900 opacity-60 hover:opacity-80"
+                : "bg-zinc-900 hover:bg-zinc-800 active:scale-[0.98]"
+                }`}
             >
               <div className="flex items-start justify-between">
                 <p className="text-sm text-zinc-400 font-medium">
                   Plano #{plan.id}
                 </p>
                 <div
-                  className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
-                    plan.status === "Ativo"
-                      ? "bg-green-500/20 text-green-400"
-                      : plan.status === "Pendente"
+                  className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${plan.status === "Ativo"
+                    ? "bg-green-500/20 text-green-400"
+                    : plan.status === "Pendente"
                       ? "bg-orange-500/20 text-orange-400"
                       : "bg-zinc-700/20 text-zinc-500"
-                  }`}
+                    }`}
                 >
                   <div
-                    className={`size-1.5 rounded-full ${
-                      plan.status === "Ativo"
-                        ? "bg-green-400"
-                        : plan.status === "Pendente"
+                    className={`size-1.5 rounded-full ${plan.status === "Ativo"
+                      ? "bg-green-400"
+                      : plan.status === "Pendente"
                         ? "bg-orange-400"
                         : "bg-zinc-500"
-                    }`}
+                      }`}
                   ></div>
                   {plan.status}
                 </div>
@@ -149,11 +144,10 @@ const MyPlans = () => {
                   <p className="text-xs text-zinc-400">Lucro Diário</p>
                   <div className="flex items-center gap-1.5">
                     <p
-                      className={`text-base font-semibold ${
-                        plan.dailyProfit > 0
-                          ? "text-green-400"
-                          : "text-red-500"
-                      }`}
+                      className={`text-base font-semibold ${plan.dailyProfit > 0
+                        ? "text-green-400"
+                        : "text-red-500"
+                        }`}
                     >
                       {plan.dailyProfit > 0 ? "+" : ""}
                       Kz {Math.abs(plan.dailyProfit).toFixed(2)}
@@ -270,4 +264,4 @@ const MyPlans = () => {
   );
 };
 
-export default MyPlans;
+export default Plans;

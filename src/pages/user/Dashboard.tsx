@@ -26,6 +26,7 @@ const Dashboard = () => {
   const [dados, setDados] = useState<LucroData[]>([]);
   const [planos, setPlanos] = useState<Plano[]>([]);
   const [notificacoes, setNotificacoes] = useState<number>(3); // Mock de notificações
+  const user = "tradezoner"
 
   // Simula chamada à API
   useEffect(() => {
@@ -52,6 +53,7 @@ const Dashboard = () => {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#0A0A0A] font-display">
       {/* Header */}
+      {/* Header */}
       <div className="sticky top-0 z-10 flex items-center justify-between bg-[#0A0A0A]/80 p-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div
@@ -61,7 +63,7 @@ const Dashboard = () => {
                 "url(https://lh3.googleusercontent.com/aida-public/AB6AXuDaua3ZJo-aK_ROmAmJ9xUv94ROudmtfQqzK1IqipBDvD8AWn9KQ1mI-WTgUha-SMzEOM9w4Vhm9B89QUrNTCfMpBCvhpPsbiYo75rFFb4jl7w7bM0LiF2DK0TXjpBoerjl1KaAfXmcgQfKEfjaAcfHTHnkEvekGS47B5sNJ5EDXOafynRja0WIcfx6n0MLIFVLuUdsUwFS7QCgaUwA-3m_zpiEuLLH_viRjjCbwVDWOlwva7Y-LkHYmIE1DH19_G3dBOyk2dCCzk6p)",
             }}
           />
-          <h2 className="text-lg font-bold text-white">Olá, Tradezoner</h2>
+          <h2 className="text-lg font-bold text-white">Olá, {user}</h2>
         </div>
 
         {/* Notificações com badge */}

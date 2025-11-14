@@ -118,7 +118,7 @@ const WalletPage: React.FC = () => {
             <p className="text-gray-200 text-sm">Saldo Disponível</p>
 
             <button
-              onClick={() => setBalanceVisible(!balanceVisible)}
+              onClick={() => setBalanceVisible(balanceVisible)}
               className="text-gray-200"
             >
               {balanceVisible ? <Eye size={22} /> : <EyeOff size={22} />}

@@ -256,7 +256,7 @@ const WalletPage: React.FC = () => {
             className="flex flex-col items-center gap-1 text-green-400"
           >
             <Wallet size={22} />
-            <span className="text-[11px] font-bold">Início</span>
+            <span className="text-[11px] font-bold">Carteira</span>
           </Link>
 
 

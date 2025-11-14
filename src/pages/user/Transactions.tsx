@@ -178,7 +178,7 @@ const Transactions = () => {
       </main>
 
       {/* BOTTOM NAV */}
-      <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-[#0A0A0A]/80 backdrop-blur-sm">
+      <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
 
           <Link

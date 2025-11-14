@@ -13,6 +13,7 @@ import {
   User,
   X,
   BarChart2,
+  ActivityIcon,
 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -249,30 +250,30 @@ const WalletPage: React.FC = () => {
 
 
       {/* NAVBAR */}
-      <footer className="fixed bottom-0 left-0 right-0 flex justify-around bg-[#0A0A0A]/80 backdrop-blur-lg border-t border-gray-800 px-4 pb-4 pt-2">
+      <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
         <Link
-          to="/dashboard"
+          to="/wallet"
           className="flex flex-col items-center gap-1 text-gray-400"
         >
-          <Home size={22} />
+          <Wallet size={22} />
           <span className="text-[11px] font-bold">Início</span>
         </Link>
 
 
         <Link
-          to="/wallet"
+          to="/plans"
           className="flex flex-col items-center gap-1 text-green-400"
         >
-          <Wallet size={22} />
-          <span className="text-[11px] font-bold">Carteira</span>
+          <BarChart2 size={22} />
+          <span className="text-[11px] font-bold">Planos</span>
         </Link>
 
         <Link
-          to="/plans"
-          className="flex flex-col items-center gap-1 text-gray-400"
+          to="/transactions"
+          className="flex flex-col items-center gap-1 text-zinc-500 hover:text-green-500 transition"
         >
-          <BarChart2 size={20} />
-          <span className="text-[11px] font-bold">Planos</span>
+          <ActivityIcon className="w-5 h-5" />
+          <span className="text-[11px] font-bold">Transações</span>
         </Link>
 
 

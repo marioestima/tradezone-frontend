@@ -205,7 +205,7 @@ const Dashboard = () => {
       </Transition>
 
       {/* RODAPÉ */}
-      <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-zinc-800 bg-[#0A0A0A]/70 px-4 pt-3 pb-6 backdrop-blur-md">
+      <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
         <div className="mx-auto grid max-w-md grid-cols-4 items-center justify-items-center gap-2">
           <Link
             to="/dashboard"

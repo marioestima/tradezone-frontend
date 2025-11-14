@@ -250,7 +250,8 @@ const WalletPage: React.FC = () => {
 
       {/* NAVBAR */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
-        <Link
+       <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
+         <Link
           to="/wallet"
           className="flex flex-col items-center gap-1 text-gray-400"
         >
@@ -283,6 +284,7 @@ const WalletPage: React.FC = () => {
           <User size={22} />
           <span className="text-[11px] font-bold">Perfil</span>
         </Link>
+       </div>
       </footer>
     </div>
   );

@@ -8,7 +8,6 @@ import {
   ArrowUpRight,
   TrendingUp,
   Plus,
-  Home,
   Wallet,
   User,
   X,

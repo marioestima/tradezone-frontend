@@ -13,7 +13,7 @@ import Wallet from "../pages/user/Wallet";
 import Plans from "../pages/user/Plans";
 import Investments from "../pages/user/Investments";
 import Transactions from "../pages/user/Transactions";
-import Notification from "../pages/user/Notification/Notification";
+import Notification from "../pages/Notification/Notification";
 
 // Novas páginas do Depósito
 import DepositPay from "../pages/user/Deposits/DespositPay";

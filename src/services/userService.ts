@@ -36,4 +36,10 @@ export const userService = {
     const response = await api.get("/users");
     return response.data;
   },
+
+  // NOVO: Pegar usuário logado
+  getMe: async (): Promise<User> => {
+    const response = await api.get("/users/me");
+    return response.data;
+  },
 };

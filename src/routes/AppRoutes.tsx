@@ -13,6 +13,7 @@ import Wallet from "../pages/user/Wallet";
 import Plans from "../pages/user/Plans";
 import Investments from "../pages/user/Investments";
 import Transactions from "../pages/user/Transactions";
+import Notification from "../pages/Notification/Notification";
 
 // Componente de rota privada
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -75,6 +76,15 @@ const AppRoutes = () => {
         element={
           <PrivateRoute>
             <Transactions />
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/notifications"
+        element={
+          <PrivateRoute>
+            <Notification />
           </PrivateRoute>
         }
       />

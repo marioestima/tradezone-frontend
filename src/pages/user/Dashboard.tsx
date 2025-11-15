@@ -56,7 +56,7 @@ const Dashboard = () => {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#0A0A0A] font-display text-white">
       {/* CABEÇALHO */}
-      <NavBar title="Painel de controle" />
+      <NavBar title="Bem vindo Mario Jose" />
 
       {/* CONTEÚDO PRINCIPAL */}
       <main className="flex-1 px-4 py-2 pb-28">

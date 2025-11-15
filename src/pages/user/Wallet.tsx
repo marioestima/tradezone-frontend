@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Bell,
   Eye,
@@ -18,8 +18,16 @@ import { Dialog, Transition } from "@headlessui/react";
 
 const WalletPage: React.FC = () => {
   const [balanceVisible, setBalanceVisible] = useState(false);
+
   const [filter, setFilter] = useState("all");
-  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false); // modal saque
+  const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+
+  const [depositModalOpen, setDepositModalOpen] = useState(false);
+  const [currencyStep, setCurrencyStep] = useState<"choice" | "method">("choice");
+  const [selectedCurrency, setSelectedCurrency] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const transactions = [
     {
@@ -69,6 +77,30 @@ const WalletPage: React.FC = () => {
       ? transactions
       : transactions.filter((t) => t.type === filter);
 
+  const openDepositModal = () => {
+    setCurrencyStep("choice");
+    setSelectedCurrency(null);
+    setSelectedMethod(null);
+    setDepositModalOpen(true);
+  };
+
+  const handleCurrencySelect = (currency: string) => {
+    setSelectedCurrency(currency);
+    setCurrencyStep("method");
+  };
+
+  const handleMethodSelect = (method: string) => {
+    setSelectedMethod(method);
+
+    // Ir para página de pagamento (vamos criar depois)
+    navigate("/deposit/pay", {
+      state: {
+        currency: selectedCurrency,
+        method: method,
+      },
+    });
+  };
+
   return (
     <div className="font-display bg-[#0A0A0A] min-h-screen flex flex-col">
       {/* HEADER */}
@@ -86,13 +118,14 @@ const WalletPage: React.FC = () => {
 
       {/* MAIN */}
       <main className="flex-1 px-4 pb-24">
-        {/* SALDO ESTILIZADO COMO CARTÃO */}
-        {/* <section className="mt-3 rounded-2xl bg-linear-to-r from-indigo-700 via-purple-700 to-pink-600 p-6 relative overflow-hidden shadow-lg">
+        {/* SALDO */}
+        <section className="mt-3 rounded-2xl bg-linear-to-r from-indigo-700 via-purple-700 to-pink-600 p-6 relative overflow-hidden shadow-lg">
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full rotate-45"></div>
           <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full rotate-12"></div>
 
           <div className="flex items-center justify-between">
             <p className="text-gray-200 text-sm">Saldo Disponível</p>
+
             <button
               onClick={() => setBalanceVisible(!balanceVisible)}
               className="text-gray-200"
@@ -108,36 +141,14 @@ const WalletPage: React.FC = () => {
           <p className="mt-6 text-gray-300 tracking-widest text-sm">
             **** **** **** 1234
           </p>
-        </section> */}
-        {/* SALDO ESTILIZADO COMO CARTÃO */}
-        <section className="mt-3 rounded-2xl bg-linear-to-r from-indigo-700 via-purple-700 to-pink-600 p-6 relative overflow-hidden shadow-lg">
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full rotate-45"></div>
-          <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/10 rounded-full rotate-12"></div>
-
-          <div className="flex items-center justify-between">
-            <p className="text-gray-200 text-sm">Saldo Disponível</p>
-
-            <button
-              onClick={() => setBalanceVisible(balanceVisible)}
-              className="text-gray-200"
-            >
-              {balanceVisible ? <Eye size={22} /> : <EyeOff size={22} />}
-            </button>
-          </div>
-
-          <p className="mt-4 text-3xl sm:text-4xl font-bold text-white tracking-wider">
-            {balanceVisible ? "15.750,50 Kz" : "••••••••••"}
-          </p>
-
-          <p className="mt-6 text-gray-300 tracking-widest text-sm">
-            **** **** **** 1234
-          </p>
         </section>
-
 
         {/* BOTÕES */}
         <section className="flex gap-4 pt-6">
-          <button className="flex-1 h-14 flex items-center justify-center gap-2 bg-green-500 text-black font-bold rounded-xl">
+          <button
+            onClick={openDepositModal}
+            className="flex-1 h-14 flex items-center justify-center gap-2 bg-green-500 text-black font-bold rounded-xl"
+          >
             <Plus size={20} />
             Depositar
           </button>
@@ -200,7 +211,6 @@ const WalletPage: React.FC = () => {
             </div>
           ))}
         </div>
-
       </main>
 
       {/* MODAL DE SAQUE */}
@@ -223,7 +233,9 @@ const WalletPage: React.FC = () => {
             >
               <Dialog.Panel className="w-full max-w-md rounded-t-2xl bg-[#111] p-6 space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-bold text-white">Solicitar Saque</h3>
+                  <h3 className="text-lg font-bold text-white">
+                    Solicitar Saque
+                  </h3>
                   <button onClick={() => setWithdrawModalOpen(false)}>
                     <X size={24} className="text-gray-400" />
                   </button>
@@ -247,6 +259,109 @@ const WalletPage: React.FC = () => {
         </Dialog>
       </Transition>
 
+      {/* MODAL DE DEPÓSITO */}
+      <Transition appear show={depositModalOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-50"
+          onClose={() => setDepositModalOpen(false)}
+        >
+          <div className="fixed inset-0 bg-black/60" aria-hidden="true" />
+
+          <div className="fixed inset-0 flex items-end justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="transform transition duration-200"
+              enterFrom="translate-y-full"
+              enterTo="translate-y-0"
+              leave="transform duration-200"
+              leaveFrom="translate-y-0"
+              leaveTo="translate-y-full"
+            >
+              <Dialog.Panel className="w-full max-w-md rounded-t-2xl bg-[#111] p-6 space-y-4">
+                {/* TÍTULO */}
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-bold text-white">
+                    {currencyStep === "choice"
+                      ? "Escolher Moeda"
+                      : "Escolher Método"}
+                  </h3>
+                  <button onClick={() => setDepositModalOpen(false)}>
+                    <X size={24} className="text-gray-400" />
+                  </button>
+                </div>
+
+                {/* STEP 1 – Escolher moeda */}
+                {currencyStep === "choice" && (
+                  <div className="space-y-4">
+                    <button
+                      onClick={() => handleCurrencySelect("USDT")}
+                      className="w-full bg-green-500 text-black font-bold py-3 rounded-xl"
+                    >
+                      Depositar em USDT
+                    </button>
+
+                    <button
+                      onClick={() => handleCurrencySelect("KZ")}
+                      className="w-full bg-blue-500 text-black font-bold py-3 rounded-xl"
+                    >
+                      Depositar em Kwanza
+                    </button>
+                  </div>
+                )}
+
+                {/* STEP 2 – Escolher método */}
+                {currencyStep === "method" && (
+                  <div className="space-y-4">
+                    {selectedCurrency === "USDT" && (
+                      <>
+                        <button
+                          onClick={() => handleMethodSelect("Binance")}
+                          className="w-full bg-yellow-400 text-black font-bold py-3 rounded-xl"
+                        >
+                          Binance Pay / Wallet
+                        </button>
+
+                        <button
+                          onClick={() => handleMethodSelect("RedHot")}
+                          className="w-full bg-red-400 text-black font-bold py-3 rounded-xl"
+                        >
+                          RedHot Wallet
+                        </button>
+                      </>
+                    )}
+
+                    {selectedCurrency === "KZ" && (
+                      <>
+                        <button
+                          onClick={() => handleMethodSelect("BAI")}
+                          className="w-full bg-blue-400 text-black font-bold py-3 rounded-xl"
+                        >
+                          BAI Mobile
+                        </button>
+
+                        <button
+                          onClick={() => handleMethodSelect("BFA")}
+                          className="w-full bg-orange-400 text-black font-bold py-3 rounded-xl"
+                        >
+                          BFA
+                        </button>
+
+                        <button
+                          onClick={() => handleMethodSelect("BIC")}
+                          className="w-full bg-green-400 text-black font-bold py-3 rounded-xl"
+                        >
+                          BIC
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
 
       {/* NAVBAR */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
@@ -259,10 +374,9 @@ const WalletPage: React.FC = () => {
             <span className="text-[11px] font-bold">Carteira</span>
           </Link>
 
-
           <Link
             to="/plans"
-            className="flex flex-col items-center gap-1  text-gray-400 hover:text-green-500 "
+            className="flex flex-col items-center gap-1 text-gray-400 hover:text-green-500"
           >
             <BarChart2 size={22} />
             <span className="text-[11px] font-bold">Planos</span>
@@ -270,12 +384,11 @@ const WalletPage: React.FC = () => {
 
           <Link
             to="/transactions"
-            className="flex flex-col items-center gap-1 text-zinc-500 hover:text-green-500 transition"
+            className="flex flex-col items-center gap-1 text-gray-500 hover:text-green-500"
           >
             <ActivityIcon className="w-5 h-5" />
             <span className="text-[11px] font-bold">Transações</span>
           </Link>
-
 
           <Link
             to="/profile"

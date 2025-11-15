@@ -86,27 +86,14 @@ const Dashboard = () => {
       <main className="flex-1 px-4 py-2 pb-28">
         <section className="mt-4 flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-zinc-400">Nome</p>
-              <p className="text-2xl font-bold">{user?.name}</p>
-            </div>
+
             <div className="h-10 w-px bg-zinc-700"></div>
             <div>
               <p className="text-sm text-zinc-400">Saldo</p>
               <p className="text-2xl font-bold text-green-500">{formatKz(user?.balance || 0)}</p>
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-zinc-400">Número da Conta</p>
-              <p className="text-base font-medium">{user?.bankAccount || "Não definido"}</p>
-            </div>
-            <div className="h-10 w-px bg-zinc-700"></div>
-            <div>
-              <p className="text-sm text-zinc-400">Banco</p>
-              <p className="text-base font-medium">{user?.bankName || "Não definido"}</p>
-            </div>
-          </div>
+
         </section>
 
         <section className="mt-6 flex flex-col gap-2 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">

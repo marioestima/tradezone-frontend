@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState } from "react";
 import { Bell, ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -20,7 +20,6 @@ const NavBar = ({ title }: NavBarProps) => {
 
       {/* ESQUERDA — Avatar ou Botão Voltar */}
       <div className="flex items-center gap-3">
-
         {isDashboard ? (
           // Avatar
           <div
@@ -31,15 +30,19 @@ const NavBar = ({ title }: NavBarProps) => {
             }}
           />
         ) : (
-          // Botão voltar
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.length > 2) {
+                navigate(-1);
+              } else {
+                navigate("/dashboard");
+              }
+            }}
             className="text-gray-100 flex items-center"
           >
             <ArrowLeft size={26} />
           </button>
         )}
-
       </div>
 
       {/* Título */}

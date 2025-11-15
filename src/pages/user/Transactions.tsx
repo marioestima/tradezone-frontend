@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import {
   Bell,
   Download,
@@ -14,9 +14,19 @@ import {
 } from "lucide-react";
 
 const Transactions = () => {
+  const location = useLocation();
+
+  // Footer links com lógica de ativo
+  const footerLinks = [
+    { to: "/dashboard", label: "Início", icon: <Home size={20} /> },
+    { to: "/wallet", label: "Carteira", icon: <Wallet size={20} /> },
+    { to: "/transactions", label: "Transações", icon: <Replace size={20} /> },
+    { to: "/profile", label: "Perfil", icon: <User size={20} /> },
+  ];
+
   return (
     <div className="relative min-h-screen w-full bg-[#0A0A0A] text-white pb-24 antialiased">
-      
+
       {/* HEADER */}
       <header className="sticky top-0 z-10 bg-[#0A0A0A]/80 backdrop-blur-sm px-4 pt-4 pb-2">
         <div className="flex items-center">
@@ -36,11 +46,9 @@ const Transactions = () => {
 
       {/* MAIN */}
       <main className="flex-1">
-        
         {/* FILTROS */}
         <div className="px-4 py-3 space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            
             {/* Tipos */}
             <div className="relative">
               <select className="w-full appearance-none rounded-lg bg-[#1A1A1A] py-3 pl-4 pr-10 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50">
@@ -66,7 +74,7 @@ const Transactions = () => {
           </div>
         </div>
 
-        {/* LISTA */}
+        {/* LISTA DE TRANSAÇÕES */}
         <div className="flex flex-col">
 
           {/* Hoje */}
@@ -77,7 +85,6 @@ const Transactions = () => {
           </div>
 
           <div className="divide-y divide-white/10">
-            
             {/* Depósito */}
             <div className="flex items-center gap-4 p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-green-500/20 text-green-400">
@@ -121,7 +128,6 @@ const Transactions = () => {
           </div>
 
           <div className="divide-y divide-white/10">
-
             {/* Lucro */}
             <div className="flex items-center gap-4 p-4">
               <div className="flex size-10 items-center justify-center rounded-full bg-blue-500/20 text-blue-400">
@@ -173,45 +179,26 @@ const Transactions = () => {
               </div>
             </div>
           </div>
-
         </div>
       </main>
 
-      {/* BOTTOM NAV */}
+      {/* BOTTOM NAV COM LÓGICA DE ATIVO */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
-
-          <Link
-            to="/dashboard"
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-500 transition-colors"
-          >
-            <Home />
-            <span className="text-xs font-medium">Início</span>
-          </Link>
-
-          <Link
-            to="/wallet"
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-500 transition-colors"
-          >
-            <Wallet />
-            <span className="text-xs font-medium">Carteira</span>
-          </Link>
-
-          <Link
-            to="/transactions"
-            className="flex flex-col items-center gap-1 text-blue-500"
-          >
-            <Replace />
-            <span className="text-xs font-bold">Transações</span>
-          </Link>
-
-          <Link
-            to="/profile"
-            className="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-500 transition-colors"
-          >
-            <User />
-            <span className="text-xs font-medium">Perfil</span>
-          </Link>
+          {footerLinks.map((link) => {
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`flex flex-col items-center gap-1 text-sm font-bold transition ${isActive ? "text-green-500" : "text-gray-500 hover:text-green-500"
+                  }`}
+              >
+                {link.icon}
+                <span className={`text-[11px] ${isActive ? "font-bold" : "font-medium"}`}>{link.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </footer>
     </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Search,
   MoreVertical,
@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import NavBar from "../../components/NavBar";
 
-
 interface Plan {
   id: string;
   status: "Ativo" | "Pendente" | "Fechado";
@@ -31,6 +30,7 @@ export default function Plans() {
   const [search, setSearch] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
+  const location = useLocation();
 
   // Simula chamada à API
   useEffect(() => {
@@ -47,6 +47,14 @@ export default function Plans() {
       filter === "Abertos" ? p.status !== "Fechado" : p.status === "Fechado"
     )
     .filter((p) => p.id.toLowerCase().includes(search.toLowerCase()));
+
+  // Footer links
+  const links = [
+    { to: "/plans", label: "Planos", icon: <BarChart2 size={20} /> },
+    { to: "/wallet", label: "Carteira", icon: <Wallet size={20} /> },
+    { to: "/transactions", label: "Transações", icon: <ActivityIcon size={20} /> },
+    { to: "/profile", label: "Perfil", icon: <User size={20} /> },
+  ];
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0A0A0A] text-white font-display pb-24">
@@ -95,7 +103,9 @@ export default function Plans() {
           {filteredPlans.map((plan) => (
             <div
               key={plan.id}
-              onClick={() => (plan.status !== "Fechado" ? setSelectedPlan(plan) : null)}
+              onClick={() =>
+                plan.status !== "Fechado" ? setSelectedPlan(plan) : null
+              }
               className={`flex flex-col rounded-xl p-4 border border-neutral-800 transition-all ${plan.status === "Fechado"
                 ? "bg-zinc-900 opacity-60 hover:opacity-80"
                 : "bg-zinc-900 hover:bg-zinc-800 active:scale-[0.98]"
@@ -112,7 +122,7 @@ export default function Plans() {
                     }`}
                 >
                   <div
-                    className={`size-1.5 rounded-full ${plan.status === "Ativo"
+                    className={`h-2 w-2 rounded-full ${plan.status === "Ativo"
                       ? "bg-green-400"
                       : plan.status === "Pendente"
                         ? "bg-orange-400"
@@ -155,40 +165,25 @@ export default function Plans() {
         </div>
       </main>
 
-      {/* Footer fixa com links corretos */}
+      {/* Footer fixa com destaque ativo */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
-          <Link
-            to="/plans" 
-            className="flex flex-col items-center gap-1 text-green-500"
-          >
-            <BarChart2 size={20} />
-            <span className="text-[11px] font-bold">Planos</span>
-          </Link>
-
-          <Link
-            to="/wallet"
-            className="flex flex-col items-center gap-1 text-zinc-500 hover:text-green-500 transition"
-          >
-            <Wallet className="w-5 h-5" />
-            <span className="text-[11px] font-bold">Carteira</span>
-          </Link>
-
-          <Link
-            to="/transactions"
-            className="flex flex-col items-center gap-1 text-zinc-500 hover:text-green-500 transition"
-          >
-            <ActivityIcon className="w-5 h-5" />
-            <span className="text-[11px] font-bold">Transações</span>
-          </Link>
-
-          <Link
-            to="/profile"
-            className="flex flex-col items-center gap-1 text-zinc-500 hover:text-green-500 transition"
-          >
-            <User className="w-5 h-5" />
-            <span className="text-[11px] font-bold">Perfil</span>
-          </Link>
+          {links.map((link) => {
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`flex flex-col items-center gap-1 text-sm font-bold transition ${isActive
+                  ? "text-green-500"
+                  : "text-gray-500 hover:text-green-500"
+                  }`}
+              >
+                {link.icon}
+                <span className="text-[11px]">{link.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </footer>
 
@@ -240,7 +235,7 @@ export default function Plans() {
                     <p className="text-zinc-300">
                       Lucro Diário:{" "}
                       <span className="text-green-500 font-semibold">
-                        KZ 750,00
+                        KZ {selectedPlan?.dailyProfit.toFixed(2)}
                       </span>
                     </p>
                   </div>
@@ -249,7 +244,7 @@ export default function Plans() {
                     <p className="text-zinc-300">
                       Lucro Mensal:{" "}
                       <span className="text-green-500 font-semibold">
-                        KZ 22.500,00
+                        KZ {(selectedPlan?.dailyProfit! * 30).toFixed(2)}
                       </span>
                     </p>
                   </div>
@@ -272,7 +267,6 @@ export default function Plans() {
           </div>
         </Dialog>
       </Transition>
-
     </div>
   );
 }

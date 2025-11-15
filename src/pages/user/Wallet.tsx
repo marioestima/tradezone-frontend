@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Bell,
   Eye,
   EyeOff,
   ArrowDownLeft,
@@ -15,6 +14,7 @@ import {
   ActivityIcon,
 } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import NavBar from "../../components/NavBar";
 
 const WalletPage: React.FC = () => {
   const [balanceVisible, setBalanceVisible] = useState(false);
@@ -87,8 +87,6 @@ const WalletPage: React.FC = () => {
     setCurrencyStep("method");
   };
 
-  // AQUI ESTAVA O ERRO ⚠
-  // selectedMethod foi removido porque não era utilizado.
   const handleMethodSelect = (method: string) => {
     navigate("/deposit/pay", {
       state: {
@@ -101,17 +99,7 @@ const WalletPage: React.FC = () => {
   return (
     <div className="font-display bg-[#0A0A0A] min-h-screen flex flex-col">
       {/* HEADER */}
-      <header className="sticky top-0 z-20 flex items-center justify-between bg-background-dark px-4 py-3">
-        <img
-          className="size-10 rounded-full"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2l3xMqUJ1YopTi0gXgYWDXghc112-HiECEJvZQ3g0iOs7oYIPXMC3VREKXtudxTLx9mIp-slfQ6pJNGS-WAXv6AtJVCBHSLEeelVjcD3CuljkdL9ReJ3EX8nb-s0XLR-lVNpV-excmCoFZxKhuHgz3DJgcDC15Rk_S9audnijbjePBWyd104Fr0aoQ-3DkdCIbakm0LV0t7dWqNOCpiu9aycPwJIJYx1IOkzhoEQxeK9J_EFoH9dSRCIE0CH2r3Byq-Sp0fJFIfv-"
-          alt="user"
-        />
-        <h1 className="text-lg font-semibold text-gray-50">Minha Carteira</h1>
-        <button className="text-gray-300">
-          <Bell size={24} />
-        </button>
-      </header>
+      <NavBar  title="Minha Carteira"/>
 
       {/* MAIN */}
       <main className="flex-1 px-4 pb-24">
@@ -140,11 +128,11 @@ const WalletPage: React.FC = () => {
           </p>
         </section>
 
-        {/* BOTÕES */}
+        {/* BOTÕES (MELHORADOS EM VERDE/VERMELHO E TEXTO BRANCO) */}
         <section className="flex gap-4 pt-6">
           <button
             onClick={openDepositModal}
-            className="flex-1 h-14 flex items-center justify-center gap-2 bg-green-500 text-black font-bold rounded-xl"
+            className="flex-1 h-14 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl shadow-lg"
           >
             <Plus size={20} />
             Depositar
@@ -152,7 +140,7 @@ const WalletPage: React.FC = () => {
 
           <button
             onClick={() => setWithdrawModalOpen(true)}
-            className="flex-1 h-14 flex items-center justify-center gap-2 bg-red-500 text-black font-bold rounded-xl"
+            className="flex-1 h-14 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg"
           >
             <ArrowUpRight size={20} />
             Sacar
@@ -247,7 +235,7 @@ const WalletPage: React.FC = () => {
                   className="w-full bg-black border border-gray-700 rounded-lg p-2 text-white mb-4"
                   placeholder="Valor do Saque"
                 />
-                <button className="w-full bg-red-500 text-black font-bold py-3 rounded-xl">
+                <button className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl">
                   Solicitar Saque
                 </button>
               </Dialog.Panel>
@@ -293,14 +281,14 @@ const WalletPage: React.FC = () => {
                   <div className="space-y-4">
                     <button
                       onClick={() => handleCurrencySelect("USDT")}
-                      className="w-full bg-green-500 text-black font-bold py-3 rounded-xl"
+                      className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl"
                     >
                       Depositar em USDT
                     </button>
 
                     <button
                       onClick={() => handleCurrencySelect("KZ")}
-                      className="w-full bg-blue-500 text-black font-bold py-3 rounded-xl"
+                      className="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded-xl"
                     >
                       Depositar em Kwanza
                     </button>

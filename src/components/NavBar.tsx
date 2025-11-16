@@ -50,7 +50,7 @@ const NavBar = ({ title }: NavBarProps) => {
 
       {/* Notificações */}
       <div className="relative">
-        <a href="/notificacoes" className="text-zinc-100">
+        <a href="/notifications" className="text-zinc-100">
           <Bell size={24} />
         </a>
 

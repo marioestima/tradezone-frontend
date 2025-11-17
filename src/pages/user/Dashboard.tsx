@@ -1,12 +1,13 @@
- import { Home, BarChart2, Wallet, User, ArrowUp, X, TrendingUp, Calendar, Coins } from "lucide-react";
+import { Home, BarChart2, Wallet, User, ArrowUp, X, TrendingUp, Calendar, Coins } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import NavBar from "../../components/NavBar";
 import { userService } from "../../services/userService";
-import type { Investment } from "../../services/investementService";
-import type { Plan as ApiPlan } from "../../services/planService";
+import { planService, type Plan as ApiPlan } from "../../services/planService";
+import { dailyProfitService, type DailyProfit } from "../../services/dailyProfitService";
+// import type { Investment } from "../../services/investementService";
 
 // Tipos
 type User = {
@@ -50,21 +51,20 @@ const Dashboard = () => {
       const jwt = await import("jwt-decode");
       const decoded = jwt.jwtDecode<{ sub: number }>(token);
 
+      // Usuário logado
       const me = await userService.getUser(decoded.sub);
       setUser(me);
 
-      // Buscar investimentos
-      const { investmentService } = await import("../../services/investementService");
-      const investments: Investment[] = await investmentService.getActiveByUser(decoded.sub);
-
-      const chartDataFormatted: ProfitData[] = investments.map((inv) => ({
-        day: new Date(inv.startAt).toLocaleDateString("pt-AO", { day: "2-digit", month: "2-digit" }),
-        profit: inv.accumulated,
+      // Lucros diários via API
+      const profits: DailyProfit[] = await dailyProfitService.getAll();
+      const last7: DailyProfit[] = profits.slice(-7); // últimos 7 dias
+      const chartDataFormatted: ProfitData[] = last7.map((p) => ({
+        day: new Date(p.date).toLocaleDateString("pt-AO", { day: "2-digit", month: "2-digit" }),
+        profit: p.amount,
       }));
       setChartData(chartDataFormatted);
 
       // Buscar planos
-      const { planService } = await import("../../services/planService");
       const allPlans: ApiPlan[] = await planService.getAll();
       setPlans(
         allPlans.map((p) => ({
@@ -84,18 +84,18 @@ const Dashboard = () => {
       <NavBar title={`Bem-vindo ${user?.name || ""}`} />
 
       <main className="flex-1 px-4 py-2 pb-28">
+        {/* Saldo */}
         <section className="mt-4 flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-
             <div className="h-10 w-px bg-zinc-700"></div>
             <div>
               <p className="text-sm text-zinc-400">Saldo</p>
               <p className="text-2xl font-bold text-green-500">{formatKz(user?.balance || 0)}</p>
             </div>
           </div>
-
         </section>
 
+        {/* Lucro Diário */}
         <section className="mt-6 flex flex-col gap-2 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <p className="text-base font-medium text-zinc-400">Lucro Diário</p>
           <p className="text-3xl font-bold text-white">
@@ -103,7 +103,9 @@ const Dashboard = () => {
           </p>
           <div className="flex items-center gap-2">
             <ArrowUp size={16} className="text-green-500" />
-            <p className="text-sm font-medium text-green-500">+2.5%</p>
+            <p className="text-sm font-medium text-green-500">
+              {chartData.length ? `+${((chartData.reduce((sum, c) => sum + c.profit, 0) / (chartData.length || 1)) * 0.025).toFixed(2)}%` : "+0%"}
+            </p>
             <span className="text-sm text-zinc-500 ml-1">Últimos 7 dias</span>
           </div>
 
@@ -112,16 +114,24 @@ const Dashboard = () => {
               <LineChart data={chartData}>
                 <XAxis dataKey="day" stroke="#555" />
                 <YAxis hide />
-                <Tooltip contentStyle={{ backgroundColor: "#111", border: "none", color: "#fff" }} formatter={(value: number) => formatKz(value)} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "#111", border: "none", color: "#fff" }}
+                  formatter={(value: number) => formatKz(value)}
+                />
                 <Line type="monotone" dataKey="profit" stroke="#22c55e" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </section>
 
+        {/* Planos */}
         <section className="mt-6 flex flex-col gap-4">
           {plans.map((plan) => (
-            <button key={plan.id} onClick={() => setSelectedPlan(plan)} className="flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm border border-zinc-800 text-left transition hover:scale-[1.01] hover:bg-zinc-800/80">
+            <button
+              key={plan.id}
+              onClick={() => setSelectedPlan(plan)}
+              className="flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm border border-zinc-800 text-left transition hover:scale-[1.01] hover:bg-zinc-800/80"
+            >
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold">Plano {plan.id}</h3>
                 <span className="px-2 py-1 text-xs font-bold text-white bg-green-500/80 rounded-full">{plan.profitRate}% de Lucro</span>
@@ -141,6 +151,7 @@ const Dashboard = () => {
         </section>
       </main>
 
+      {/* Modal do Plano */}
       <Transition appear show={!!selectedPlan} as={Fragment}>
         <Dialog as="div" className="relative z-50" onClose={() => setSelectedPlan(null)}>
           <Transition.Child as={Fragment} enter="ease-out duration-200" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
@@ -158,15 +169,23 @@ const Dashboard = () => {
                 <div className="space-y-3 text-left">
                   <div className="flex items-center gap-2">
                     <TrendingUp size={16} className="text-green-500" />
-                    <p className="text-white">Lucro Diário: <span className="text-green-500 font-semibold">{formatKz(((selectedPlan?.returnAmount || 0) - (selectedPlan?.amount || 0)) / 60)}</span></p>
+                    <p className="text-white">
+                      Lucro Diário:{" "}
+                      <span className="text-green-500 font-semibold">{formatKz(((selectedPlan?.returnAmount || 0) - (selectedPlan?.amount || 0)) / 60)}</span>
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Calendar size={16} className="text-green-500" />
-                    <p className="text-white">Lucro Mensal: <span className="text-green-500 font-semibold">{formatKz(((selectedPlan?.returnAmount || 0) - (selectedPlan?.amount || 0)) / 2)}</span></p>
+                    <p className="text-white">
+                      Lucro Mensal:{" "}
+                      <span className="text-green-500 font-semibold">{formatKz(((selectedPlan?.returnAmount || 0) - (selectedPlan?.amount || 0)) / 2)}</span>
+                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Coins size={16} className="text-green-500" />
-                    <p className="text-white">Investimento: <span className="text-green-500 font-semibold">{formatKz(selectedPlan?.amount || 0)}</span></p>
+                    <p className="text-white">
+                      Investimento: <span className="text-green-500 font-semibold">{formatKz(selectedPlan?.amount || 0)}</span>
+                    </p>
                   </div>
                 </div>
                 <button className="mt-6 w-full rounded-xl bg-green-500 py-2 text-white font-bold hover:bg-green-600 transition">Investir Agora</button>
@@ -176,6 +195,7 @@ const Dashboard = () => {
         </Dialog>
       </Transition>
 
+      {/* Footer */}
       <footer className="fixed bottom-0 left-0 right-0 z-10 border-t border-white/10 bg-background-dark/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
           <Link to="/dashboard" className={`flex flex-col items-center ${location.pathname === "/dashboard" ? "text-green-500" : "text-zinc-400 hover:text-green-500"}`}>

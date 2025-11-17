@@ -24,4 +24,9 @@ export const planService = {
     const response = await api.post("/plans", plan);
     return response.data;
   },
+
+  close: async (id: number): Promise<Plan> => {
+    const response = await api.post(`/plans/${id}`  );
+    return response.data;
+  },
 };

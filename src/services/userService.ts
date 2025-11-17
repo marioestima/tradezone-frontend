@@ -33,13 +33,13 @@ export const userService = {
   },
 
   getAllUsers: async (): Promise<User[]> => {
-    const response = await api.get("/users");
+    const response = await api.get("/");
     return response.data;
   },
 
   // NOVO: Pegar usuário logado
   getMe: async (): Promise<User> => {
-    const response = await api.get("/users/me");
+    const response = await api.get("/me");
     return response.data;
   },
 };

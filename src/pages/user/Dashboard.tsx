@@ -48,6 +48,13 @@ const Dashboard = () => {
     const loadData = async () => {
       console.log("🔄 Carregando Dashboard...");
 
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.warn("❌ Token não encontrado. Redirecionando para login...");
+        navigate("/login");
+        return;
+      }
+
       // ======================
       // 1. PEGAR USUÁRIO LOGADO
       // ======================
@@ -56,12 +63,7 @@ const Dashboard = () => {
         console.log("📌 Usuário logado:", me);
         setUser(me);
       } catch (err: any) {
-        if (err.response?.status === 401) {
-          console.warn("Token inválido ou expirado. Redirecionando para login...");
-        } else {
-          console.error("❌ ERRO AO PUXAR USER /auth/me:", err);
-        }
-        return;
+        console.error("❌ ERRO AO PEGAR USUÁRIO:", err);
       }
 
       // ======================
@@ -73,22 +75,13 @@ const Dashboard = () => {
 
         const last7 = profits.slice(-7);
         const formatted = last7.map((p) => ({
-          day: new Date(p.date).toLocaleDateString("pt-AO", {
-            day: "2-digit",
-            month: "2-digit",
-          }),
+          day: new Date(p.date).toLocaleDateString("pt-AO", { day: "2-digit", month: "2-digit" }),
           profit: p.amount,
         }));
 
         setChartData(formatted);
       } catch (err: any) {
-        if (err.response?.status === 401) {
-          console.warn("Token inválido, redirecionando para login...");
-          localStorage.removeItem("token");
-          navigate("/login");
-        } else {
-          console.error("❌ ERRO AO PUXAR DAILY PROFIT:", err);
-        }
+        console.error("❌ ERRO AO PUXAR DAILY PROFIT:", err);
       }
 
       // ======================
@@ -96,7 +89,7 @@ const Dashboard = () => {
       // ======================
       try {
         const allPlans: ApiPlan[] = await planService.getAll();
-        console.log("💼 Planos carregados:", allPlans);
+        console.log("💼 Planos recebidos da API:", allPlans);
 
         const mapped = allPlans.map((p) => ({
           id: p.id,
@@ -106,7 +99,7 @@ const Dashboard = () => {
         }));
 
         setPlans(mapped);
-      } catch (err) {
+      } catch (err: any) {
         console.error("❌ ERRO AO PUXAR PLANOS:", err);
       }
     };
@@ -114,18 +107,29 @@ const Dashboard = () => {
     loadData();
   }, [navigate]);
 
+  const totalInvestido = plans.reduce((sum, p) => sum + p.amount, 0);
+  const lucroMedio = chartData.length
+    ? chartData.reduce((sum, c) => sum + c.profit, 0) / chartData.length
+    : 0;
+
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-[#0A0A0A] font-display text-white">
       <NavBar title={`Bem-vindo ${user?.name || ""}`} />
 
       <main className="flex-1 px-4 py-2 pb-28">
-        {/* SALDO */}
+        {/* SALDO E TOTAL INVESTIDO */}
         <section className="mt-4 flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div className="h-10 w-px bg-zinc-700"></div>
-            <div>
-              <p className="text-sm text-zinc-400">Saldo</p>
-              <p className="text-2xl font-bold text-green-500">{formatKz(user?.balance || 0)}</p>
+            <div className="flex gap-8">
+              <div>
+                <p className="text-sm text-zinc-400">Saldo</p>
+                <p className="text-2xl font-bold text-green-500">{formatKz(user?.balance || 0)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-zinc-400">Total Investido</p>
+                <p className="text-2xl font-bold text-blue-500">{formatKz(totalInvestido)}</p>
+              </div>
             </div>
           </div>
         </section>
@@ -133,9 +137,7 @@ const Dashboard = () => {
         {/* LUCRO DIÁRIO */}
         <section className="mt-6 flex flex-col gap-2 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <p className="text-base font-medium text-zinc-400">Lucro Diário</p>
-          <p className="text-3xl font-bold text-white">
-            {formatKz(chartData.reduce((sum, c) => sum + c.profit, 0) / (chartData.length || 1))}
-          </p>
+          <p className="text-3xl font-bold text-white">{formatKz(lucroMedio)}</p>
 
           <div className="mt-4 h-44 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -154,32 +156,34 @@ const Dashboard = () => {
 
         {/* PLANOS */}
         <section className="mt-6 flex flex-col gap-4">
-          {plans.map((plan) => (
-            <button
-              key={plan.id}
-              onClick={() => setSelectedPlan(plan)}
-              className="flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm border border-zinc-800 text-left transition hover:scale-[1.01] hover:bg-zinc-800/80"
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold">Plano {plan.id}</h3>
-                <span className="px-2 py-1 text-xs font-bold text-white bg-green-500/80 rounded-full">
-                  {plan.profitRate}% de Lucro
-                </span>
-              </div>
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="text-sm text-zinc-400">Valor Investido</p>
-                  <p className="text-base font-medium">{formatKz(plan.amount)}</p>
+          {plans.length === 0 ? (
+            <p className="text-zinc-400 text-center">Nenhum plano disponível no momento.</p>
+          ) : (
+            plans.map((plan) => (
+              <button
+                key={plan.id}
+                onClick={() => setSelectedPlan(plan)}
+                className="flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm border border-zinc-800 text-left transition hover:scale-[1.01] hover:bg-zinc-800/80"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-bold">Plano {plan.id}</h3>
+                  <span className="px-2 py-1 text-xs font-bold text-white bg-green-500/80 rounded-full">
+                    {plan.profitRate}% de Lucro
+                  </span>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-zinc-400">Retorno Atual</p>
-                  <p className="text-base font-medium text-green-500">
-                    {formatKz(plan.returnAmount)}
-                  </p>
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-sm text-zinc-400">Valor Investido</p>
+                    <p className="text-base font-medium">{formatKz(plan.amount)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-zinc-400">Retorno Atual</p>
+                    <p className="text-base font-medium text-green-500">{formatKz(plan.returnAmount)}</p>
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))
+          )}
         </section>
       </main>
 
@@ -216,36 +220,32 @@ const Dashboard = () => {
         <div className="mx-auto flex h-16 max-w-md items-center justify-around px-4">
           <Link
             to="/dashboard"
-            className={`flex flex-col items-center ${
-              location.pathname === "/dashboard" ? "text-green-500" : "text-zinc-400"
-            }`}
+            className={`flex flex-col items-center ${location.pathname === "/dashboard" ? "text-green-500" : "text-zinc-400"
+              }`}
           >
             <Home size={20} />
             <span className="text-[11px] font-bold">Início</span>
           </Link>
           <Link
             to="/plans"
-            className={`flex flex-col items-center ${
-              location.pathname === "/plans" ? "text-green-500" : "text-zinc-400"
-            }`}
+            className={`flex flex-col items-center ${location.pathname === "/plans" ? "text-green-500" : "text-zinc-400"
+              }`}
           >
             <BarChart2 size={20} />
             <span className="text-[11px] font-bold">Planos</span>
           </Link>
           <Link
             to="/wallet"
-            className={`flex flex-col items-center ${
-              location.pathname === "/wallet" ? "text-green-500" : "text-zinc-400"
-            }`}
+            className={`flex flex-col items-center ${location.pathname === "/wallet" ? "text-green-500" : "text-zinc-400"
+              }`}
           >
             <Wallet size={20} />
             <span className="text-[11px] font-bold">Carteira</span>
           </Link>
           <Link
             to="/profile"
-            className={`flex flex-col items-center ${
-              location.pathname === "/profile" ? "text-green-500" : "text-zinc-400"
-            }`}
+            className={`flex flex-col items-center ${location.pathname === "/profile" ? "text-green-500" : "text-zinc-400"
+              }`}
           >
             <User size={20} />
             <span className="text-[11px] font-bold">Perfil</span>

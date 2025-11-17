@@ -7,11 +7,13 @@ interface LoginResponse {
 }
 
 export const userService = {
+  // 🔓 Login (público)
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
 
+  // 🔓 Registro (público)
   register: async (
     name: string,
     email: string,
@@ -27,19 +29,21 @@ export const userService = {
     return response.data;
   },
 
+  // 🔐 Pega dados do usuário logado
+  getMe: async (): Promise<User> => {
+    const response = await api.get("/users/me");
+    return response.data;
+  },
+
+  // 🔐 Pega usuário por ID
   getUser: async (id: number): Promise<User> => {
     const response = await api.get(`/users/${id}`);
     return response.data;
   },
 
+  // 🔐 Lista todos usuários
   getAllUsers: async (): Promise<User[]> => {
-    const response = await api.get("/");
-    return response.data;
-  },
-
-  // NOVO: Pegar usuário logado
-  getMe: async (): Promise<User> => {
-    const response = await api.get("/me");
+    const response = await api.get("/users");
     return response.data;
   },
 };

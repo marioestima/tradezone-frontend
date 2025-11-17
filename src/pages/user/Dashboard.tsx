@@ -104,12 +104,14 @@ const Dashboard = () => {
         {/* SALDO E TOTAL INVESTIDO */}
         <section className="mt-4 flex flex-col gap-4 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <div className="h-10 w-px bg-zinc-700"></div>
             <div className="flex gap-8">
               <div>
                 <p className="text-sm text-zinc-400">Saldo</p>
                 <p className="text-2xl font-bold text-green-500">{formatKz(user?.balance || 0)}</p>
               </div>
+                
+              <div className="h-10 w-px bg-zinc-700"></div>
+
               <div>
                 <p className="text-sm text-zinc-400">Total Investido</p>
                 <p className="text-2xl font-bold text-blue-500">{formatKz(totalInvestido)}</p>

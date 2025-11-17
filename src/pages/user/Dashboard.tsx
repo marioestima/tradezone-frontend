@@ -39,15 +39,15 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [chartData, setChartData] = useState<ProfitData[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [userPlans, setUserPlans] = useState<Plan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
+  // Função para formatar valores em Kz
   const formatKz = (value: number) =>
-    new Intl.NumberFormat("pt-AO", { style: "currency", currency: "AOA" }).format(value);
+    new Intl.NumberFormat("pt-AO", { style: "currency", currency: "AOA", maximumFractionDigits: 0 }).format(value);
 
   useEffect(() => {
     const loadData = async () => {
-      console.log("🔄 Carregando Dashboard...");
-
       const token = localStorage.getItem("token");
       if (!token) {
         console.warn("❌ Token não encontrado. Redirecionando para login...");
@@ -85,7 +85,7 @@ const Dashboard = () => {
       }
 
       // ======================
-      // 3. PLANOS
+      // 3. PLANOS DISPONÍVEIS
       // ======================
       try {
         const allPlans: ApiPlan[] = await planService.getAll();
@@ -102,12 +102,30 @@ const Dashboard = () => {
       } catch (err: any) {
         console.error("❌ ERRO AO PUXAR PLANOS:", err);
       }
+
+      // ======================
+      // 4. PLANOS DO USUÁRIO (investidos)
+      // ======================
+      try {
+        if (user) {
+          const investedPlans: ApiPlan[] = await planService.getUserPlans(user.id);
+          const mapped = investedPlans.map((p) => ({
+            id: p.id,
+            amount: p.value,
+            returnAmount: p.value + (p.value * p.dailyProfitPct * 60) / 100,
+            profitRate: p.dailyProfitPct,
+          }));
+          setUserPlans(mapped);
+        }
+      } catch (err: any) {
+        console.error("❌ ERRO AO PEGAR PLANOS INVESTIDOS:", err);
+      }
     };
 
     loadData();
-  }, [navigate]);
+  }, [navigate, user]);
 
-  const totalInvestido = plans.reduce((sum, p) => sum + p.amount, 0);
+  const totalInvestido = userPlans.reduce((sum, p) => sum + p.amount, 0);
   const lucroMedio = chartData.length
     ? chartData.reduce((sum, c) => sum + c.profit, 0) / chartData.length
     : 0;

@@ -1,11 +1,10 @@
 import axios from "axios";
 
-// Base da API (Render ou Local)
+// URL da API
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://tradezone-api-v1.onrender.com";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://tradezone-api-v1.onrender.com";
-
-
-// Cria uma instância do Axios
+// Instância do Axios
 export const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -13,7 +12,7 @@ export const api = axios.create({
   },
 });
 
-// Intercepta as requisições e adiciona o token se existir
+// Interceptor para enviar token automaticamente
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

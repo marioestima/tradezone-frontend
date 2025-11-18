@@ -7,13 +7,13 @@ interface LoginResponse {
 }
 
 export const userService = {
-  // 🔓 Login (público)
+ 
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
 
-  // 🔓 Registro (público)
+ 
   register: async (
     name: string,
     email: string,
@@ -29,9 +29,9 @@ export const userService = {
     return response.data;
   },
 
-  
   getMe: async (): Promise<User> => {
-    const response = await api.get("/auth/me");  
+    const response = await api.get("/auth/me");
+    console.log(response);
     return response.data;
   },
 
@@ -40,7 +40,6 @@ export const userService = {
     return response.data;
   },
 
- 
   getAllUsers: async (): Promise<User[]> => {
     const response = await api.get("/users");
     return response.data;

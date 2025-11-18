@@ -1,4 +1,4 @@
-import type { User } from "../hooks/useAuth";
+import type { User } from "../context/AuthContext";
 import { api } from "./api";
 
 interface LoginResponse {
@@ -17,7 +17,7 @@ export const userService = {
     email: string,
     phone: number,
     password: string
-  ): Promise<User> => {
+  ): Promise<LoginResponse> => {
     const response = await api.post("/auth/register", {
       name,
       email,

@@ -19,12 +19,14 @@ import Notification from "../pages/Notification/Notification";
 import DepositPay from "../pages/user/Deposits/DespositPay";
 import DepositConfirm from "../pages/user/Deposits/DespositConfirm";
 import DepositSuccess from "../pages/user/Deposits/DepositSuccess";
+import type { JSX } from "react";
 
 // Componente de rota privada
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
+
 
 // Rotas principais
 const AppRoutes = () => {

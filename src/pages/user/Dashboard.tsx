@@ -117,7 +117,7 @@ const Dashboard = () => {
         {/* LUCRO DIÁRIO */}
         <section className="mt-6 flex flex-col gap-2 rounded-xl bg-zinc-900/70 p-4 backdrop-blur-sm">
           <p className="text-base font-medium text-zinc-400">Lucro Diário</p>
-          <p className="text-3xl font-bold text-white">{formatKz(lucroMedio)}</p>
+          {/* <p className="text-3xl font-bold text-white">{formatKz(lucroMedio)}</p> */}
 
           <div className="mt-4 h-44 w-full">
             <ResponsiveContainer width="100%" height="100%">

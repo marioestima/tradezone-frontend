@@ -74,8 +74,7 @@ const Dashboard = () => {
   const totalInvestido = 0;
   const lucroMedio = chartData.length
     ? chartData.reduce((sum, c) => sum + c.profit, 0) / chartData.length
-    : 0;
-
+    : 0
   const lucroTotal = chartData.reduce((sum, c) => sum + c.profit, 0);
 
   const handleInvest = () => {
